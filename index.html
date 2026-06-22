@@ -80,21 +80,39 @@
   .terminal-window {
     max-width: 950px;
     margin: 40px auto;
-    border: 1px solid #00ff41; /* Borde más sólido */
+    border: 1px solid #00ff41;
     border-radius: 8px;
-    /* GRID INTERNO POTENCIADO */
-    background-color: rgba(3, 8, 5, 0.95);
-    background-image: 
-      linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
-    background-size: 40px 40px;
-    background-position: center center;
+    background-color: rgba(3, 8, 5, 0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 0 40px rgba(0, 255, 65, 0.3), inset 0 0 30px rgba(0, 255, 65, 0.2);
     position: relative;
     overflow: hidden;
     display: none; 
+  }
+
+  /* --- NUEVO GRID 3D ANIMADO INTERNO --- */
+  .terminal-window::before {
+    content: '';
+    position: absolute;
+    top: 20%; left: -50%;
+    width: 200%; height: 150%;
+    background-image: 
+      linear-gradient(rgba(0, 255, 65, 0.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 65, 0.25) 1px, transparent 1px);
+    background-size: 50px 50px;
+    transform-origin: center top;
+    animation: grid-3d-scroll 2s linear infinite;
+    z-index: 0;
+    pointer-events: none;
+    /* Difuminado hacia el fondo para dar perspectiva real */
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%);
+  }
+
+  @keyframes grid-3d-scroll {
+    0% { transform: perspective(600px) rotateX(65deg) translateY(0); }
+    100% { transform: perspective(600px) rotateX(65deg) translateY(50px); } /* Misma medida que el background-size */
   }
 
   .terminal-window.loaded {
@@ -106,30 +124,19 @@
     background-color: #00ff41; color: #010402; padding: 8px 16px;
     font-weight: 800; display: flex; justify-content: space-between;
     align-items: center; font-size: 15px; box-shadow: 0 0 15px #00ff41;
+    position: relative; z-index: 10;
   }
 
   .terminal-body { 
     padding: 30px; 
     position: relative;
-  }
-
-  /* MARCA DE AGUA ASCII GIGANTE POTENCIADA */
-  .terminal-body::before {
-    content: '~#';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 450px;
-    color: rgba(0, 255, 65, 0.08); /* Mucho más visible */
-    z-index: 0;
-    pointer-events: none;
-    font-weight: 800;
+    z-index: 10; /* Textos sobre el grid */
   }
 
   nav {
     display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 30px;
     border-bottom: 1px solid rgba(0, 255, 65, 0.4); padding-bottom: 15px;
-    position: relative; z-index: 2; /* Para que quede sobre la marca de agua */
+    position: relative;
   }
 
   .nav-btn {
@@ -137,6 +144,7 @@
     padding: 8px 16px; cursor: pointer; font-family: 'JetBrains Mono', monospace;
     font-weight: 700; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     position: relative; overflow: hidden; text-shadow: 0 0 5px rgba(0,255,65,0.5);
+    background-color: rgba(0,0,0,0.6); /* Fondo para no transparentar el grid */
   }
 
   .nav-btn::before {
@@ -150,7 +158,7 @@
     transform: translateY(-2px); text-shadow: none;
   }
 
-  .section { display: none; position: relative; z-index: 2; /* Sobre la marca de agua */ }
+  .section { display: none; position: relative; }
   .section.active { display: block; }
 
   .cmd-prompt { margin-bottom: 25px; font-size: 16px; overflow-wrap: break-word; line-height: 1.4; }
@@ -165,6 +173,8 @@
     margin-bottom: 25px; padding-left: 15px; border-left: 2px solid rgba(0, 255, 65, 0.4);
     background: linear-gradient(90deg, rgba(0,255,65,0.1) 0%, transparent 100%);
     background-size: 200% 100%; background-position: 100% 0; transition: 0.3s;
+    background-color: rgba(0,0,0,0.4); /* Mayor legibilidad sobre el grid 3D */
+    border-radius: 0 4px 4px 0;
   }
   .data-block:hover { 
     border-left-color: #00ff41; background-position: 0 0;
@@ -175,9 +185,9 @@
   .data-subtitle { font-size: 14px; color: #aaaaaa; margin-bottom: 10px; }
   .data-desc { font-size: 15px; color: #dddddd; margin-bottom: 8px;}
 
-  .tech-stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .tech-stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; padding-bottom: 5px;}
   .tech-badge {
-    background-color: rgba(0, 255, 65, 0.05); color: #00ff41; padding: 4px 8px;
+    background-color: rgba(0, 0, 0, 0.6); color: #00ff41; padding: 4px 8px;
     font-size: 12px; border-radius: 4px; border: 1px solid rgba(0, 255, 65, 0.4); transition: 0.2s;
   }
   .data-block:hover .tech-badge { border-color: #00ff41; box-shadow: 0 0 8px rgba(0,255,65,0.5); background-color: rgba(0,255,65,0.15);}
@@ -185,7 +195,7 @@
   .skill-cat { font-size: 16px; margin-bottom: 15px; text-transform: uppercase; font-weight: bold;}
   .skill-cloud { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
   .skill-module {
-    font-size: 13.5px; color: #dddddd; background: rgba(0, 255, 65, 0.05);
+    font-size: 13.5px; color: #dddddd; background: rgba(0, 0, 0, 0.6);
     border: 1px solid rgba(0, 255, 65, 0.3); padding: 6px 12px; border-radius: 3px;
     transition: all 0.3s; cursor: default; display: flex; align-items: center;
   }
@@ -205,7 +215,6 @@
     transition: opacity 0.5s ease; padding: 20px;
   }
   
-  /* Aquí está la "caja" que encierra al loader */
   .boot-container {
     border: 1px solid rgba(0, 255, 65, 0.5);
     background: rgba(3, 8, 5, 0.95);
@@ -230,17 +239,18 @@
     .terminal-window { 
       margin: 0; border: none; border-radius: 0; width: 100vw; min-height: 100vh;
       box-shadow: none; display: none; flex-direction: column;
-      /* Mismo grid de fondo pero ajustado a móvil */
-      background-image: 
-        linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
-      background-size: 30px 30px;
     }
+    
+    /* El mismo grid 3D se aplica en el modo full screen de celular */
+    .terminal-window::before {
+      top: 10%;
+      background-size: 40px 40px;
+    }
+
     .terminal-window.loaded { display: flex; animation: none; transform: none; }
     
     .terminal-header { position: sticky; top: 0; z-index: 100; font-size: 13px; padding: 10px 15px; }
     .terminal-body { padding: 15px 15px 40px 15px; flex: 1; }
-    .terminal-body::before { font-size: 250px; color: rgba(0, 255, 65, 0.06); } /* Marca de agua visible en móvil */
 
     nav { 
       position: sticky; top: 38px; z-index: 99; background-color: rgba(3, 8, 5, 0.98);
@@ -252,7 +262,7 @@
     nav::-webkit-scrollbar { display: none; } 
     .nav-btn { flex: 0 0 auto; font-size: 12px; padding: 6px 12px; border-radius: 4px; }
 
-    .cmd-prompt { font-size: 13px; margin-bottom: 15px; }
+    .cmd-prompt { font-size: 13px; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 4px; }
     #ui-name { font-size: 26px !important; line-height: 1.1; }
     #ui-role { font-size: 15px !important; margin-bottom: 15px; }
     
@@ -296,18 +306,18 @@
     <div id="sys-profile" class="section active">
       <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="cat user_info.txt">cat user_info.txt</span><span class="cursor"></span></div>
       
-      <div class="output-line">
+      <div class="output-line" style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 5px; margin-bottom: 20px;">
         <h1 class="neon-green" id="ui-name" style="font-size: clamp(28px, 5vw, 48px); margin-bottom: 5px;">...</h1>
-        <div id="ui-role" class="neon-cyan" style="font-size: 20px; margin-bottom: 20px;">...</div>
+        <div id="ui-role" class="neon-cyan" style="font-size: 20px;">...</div>
       </div>
       
-      <div class="output-line" style="background: rgba(0, 255, 65, 0.08); padding: 15px; border-left: 4px solid #00ff41; margin-bottom: 25px; box-shadow: 0 0 15px rgba(0,255,65,0.1);">
+      <div class="output-line" style="background: rgba(0,0,0,0.5); padding: 15px; border-left: 4px solid #00ff41; margin-bottom: 25px; box-shadow: 0 0 15px rgba(0,255,65,0.1);">
         <p id="ui-bio" style="color: #eee; font-size: 14.5px;"></p>
       </div>
 
       <div class="output-line cmd-prompt" style="margin-top:20px;"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="netstat -a | grep conn">netstat -a | grep conn</span></div>
       
-      <div class="output-line" id="ui-contact" style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px; font-size: 13.5px; overflow-wrap: anywhere;"></div>
+      <div class="output-line" id="ui-contact" style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px; font-size: 13.5px; overflow-wrap: anywhere; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 5px;"></div>
     </div>
 
     <div id="sys-experience" class="section">
@@ -460,109 +470,4 @@
     if (!info) return;
     document.getElementById('ui-name').innerHTML = clean(info.nombre);
     document.getElementById('ui-role').innerHTML = `> ${clean(info.titulo)}`;
-    document.getElementById('ui-bio').innerHTML = clean(info.bio); 
-    
-    const contactHtml = [];
-    if (info.ubicacion) contactHtml.push(`<div><span class="neon-cyan">LOC</span> : ${clean(info.ubicacion)}</div>`);
-    if (info.email) contactHtml.push(`<div><span class="neon-cyan">MAIL</span>: <a href="mailto:${clean(info.email)}">${clean(info.email)}</a></div>`);
-    if (info.github) contactHtml.push(`<div><span class="neon-cyan">GIT</span> : <a href="${parseLink(info.github)}" target="_blank">${clean(info.github)}</a></div>`);
-    if (info.linkedin) contactHtml.push(`<div><span class="neon-cyan">LINK</span>: <a href="${parseLink(info.linkedin)}" target="_blank">${clean(info.linkedin)}</a></div>`);
-    
-    document.getElementById('ui-contact').innerHTML = contactHtml.join('');
-  }
-
-  function renderExperience(exp) {
-    if (!exp) return;
-    const html = exp.map(item => `
-      <div class="data-block output-line">
-        <div class="data-title neon-cyan">${clean(item.puesto)} @ ${clean(item.empresa)}</div>
-        <div class="data-subtitle">[ ${clean(item.fecha_inicio)} - ${clean(item.fecha_fin)} ]</div>
-        <div class="data-desc">> ${clean(item.descripcion)}</div>
-        ${item.tags ? `<div class="tech-stack">${item.tags.split(',').map(t => `<span class="tech-badge">${clean(t.trim())}</span>`).join('')}</div>` : ''}
-      </div>
-    `).join('');
-    document.getElementById('list-experience').innerHTML = html;
-  }
-
-  function renderProjects(proj) {
-    if (!proj) return;
-    const html = proj.map(item => `
-      <div class="data-block output-line">
-        <div class="data-title neon-cyan">${clean(item.nombre)}</div>
-        <div class="data-desc">${clean(item.descripcion)}</div>
-        <div style="color:#00ff41; font-size: 13px; text-shadow:0 0 5px rgba(0,255,65,0.4);">> Stack: ${clean(item.tecnologias)}</div>
-        ${item.link ? `<a href="${parseLink(item.link)}" target="_blank" style="display:inline-block; margin-top:10px;">[ EXECUTE DEPLOYMENT ]</a>` : ''}
-      </div>
-    `).join('');
-    document.getElementById('list-projects').innerHTML = html;
-  }
-
-  function renderSkills(skills) {
-    if (!skills) return;
-    const groups = {};
-    skills.forEach(s => {
-      if(!groups[s.categoria]) groups[s.categoria] = [];
-      groups[s.categoria].push(s.skill);
-    });
-    
-    const html = Object.entries(groups).map(([cat, items]) => `
-      <div class="output-line">
-        <div class="skill-cat neon-pink">>> ${clean(cat)}</div>
-        <div class="skill-cloud">
-          ${items.map(i => `
-            <div class="skill-module">
-              <span class="bracket neon-cyan">[</span>
-              <span>${clean(i)}</span>
-              <span class="bracket neon-cyan">]</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `).join('');
-    
-    document.getElementById('list-skills').innerHTML = html;
-  }
-
-  function renderEducation(edu, certs) {
-    let html = '<h3 class="neon-cyan output-line" style="margin-bottom: 20px; font-size:18px;">>> Degrees</h3>';
-    if (edu) {
-      html += edu.map(item => `
-        <div class="data-block output-line">
-          <div class="data-title neon-cyan">${clean(item.titulo)}</div>
-          <div class="data-subtitle">${clean(item.institucion)} [ ${clean(item.fecha_inicio)} - ${clean(item.fecha_fin)} ]</div>
-        </div>
-      `).join('');
-    }
-    document.getElementById('list-education').innerHTML = html;
-
-    if (certs) {
-      let certsHtml = '<h3 class="neon-pink output-line" style="margin-bottom: 20px; margin-top: 25px; font-size:18px;">>> Credentials</h3>';
-      certsHtml += certs.map(item => `
-        <div class="data-block output-line" style="border-left-color: #ff0055; background: linear-gradient(90deg, rgba(255,0,85,0.05) 0%, transparent 100%);">
-          <div class="data-title neon-pink" style="font-size: 16px;">${clean(item.nombre)}</div>
-          <div class="data-desc">${clean(item.institucion)}</div>
-        </div>
-      `).join('');
-      document.getElementById('list-certs').innerHTML = certsHtml;
-    }
-  }
-
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      
-      e.target.classList.add('active');
-      const targetId = e.target.getAttribute('data-target');
-      document.getElementById(targetId).classList.add('active');
-
-      if (window.innerWidth <= 768) { window.scrollTo({ top: 0, behavior: 'smooth' }); }
-      
-      runTerminalEffect(targetId);
-    });
-  });
-
-  loadData();
-</script>
-</body>
-</html>
+    document.getElementById('ui-bio').innerHTML 
