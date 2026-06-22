@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Interactive Terminal CV</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -147,7 +147,6 @@
   .section { display: none; position: relative; }
   .section.active { display: block; }
 
-  /* Corrección móvil: evitar que textos largos rompan el flex/ancho */
   .cmd-prompt { margin-bottom: 25px; font-size: 16px; overflow-wrap: break-word; word-break: break-word; line-height: 1.4; }
   .cmd-prompt span.user { font-weight: bold; } 
   .cmd-prompt span.path { font-weight: bold; }
@@ -222,11 +221,21 @@
     .terminal-window::before { top: 10%; background-size: 40px 40px; }
     .terminal-window.loaded { display: flex; animation: none; transform: none; }
     
-    .terminal-header { position: sticky; top: 0; z-index: 100; font-size: 13px; padding: 10px 15px; }
+    .terminal-header { 
+      position: sticky; 
+      top: 0; 
+      z-index: 100; 
+      font-size: 13px; 
+      /* ESTA LÍNEA EVITA QUE SE ESCONDA BAJO LA HORA/CÁMARA DEL CELULAR */
+      padding: max(10px, env(safe-area-inset-top, 10px)) 15px 10px 15px; 
+    }
     .terminal-body { padding: 15px 15px 40px 15px; flex: 1; overflow-x: hidden; }
 
     nav { 
-      position: sticky; top: 38px; z-index: 99; background-color: rgba(3, 8, 5, 0.98);
+      position: sticky; 
+      /* Ajustamos el top para que no se superponga con el nuevo header */
+      top: calc(30px + env(safe-area-inset-top, 0px)); 
+      z-index: 99; background-color: rgba(3, 8, 5, 0.98);
       flex-wrap: nowrap; overflow-x: auto; padding: 10px 0 15px 0;
       margin-bottom: 20px; margin-left: -15px; margin-right: -15px; padding-left: 15px;
       gap: 10px; border-bottom: 1px solid rgba(0, 255, 65, 0.5);
@@ -235,7 +244,13 @@
     nav::-webkit-scrollbar { display: none; } 
     .nav-btn { flex: 0 0 auto; font-size: 12px; padding: 6px 12px; border-radius: 4px; }
 
-    .cmd-prompt { font-size: 13px; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 4px; }
+    .cmd-prompt { 
+      font-size: 13px; 
+      margin-bottom: 15px; 
+      /* Quitado el fondo gris oscuro para que respire más limpio */
+      background: transparent; 
+      padding: 0; 
+    }
     #ui-name { font-size: 26px !important; line-height: 1.1; }
     #ui-role { font-size: 15px !important; margin-bottom: 15px; }
     
@@ -277,7 +292,7 @@
     </nav>
 
     <div id="sys-profile" class="section active">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="cat user_info.txt"></span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="cat user_info.txt">cat user_info.txt</span></div>
       
       <div class="output-line" style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 5px; margin-bottom: 20px;">
         <h1 class="neon-green" id="ui-name" style="font-size: clamp(28px, 5vw, 48px); margin-bottom: 5px;">...</h1>
@@ -288,28 +303,28 @@
         <p id="ui-bio" style="color: #eee; font-size: 14.5px;"></p>
       </div>
 
-      <div class="output-line cmd-prompt" style="margin-top:20px;"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="netstat -a | grep conn"></span></div>
+      <div class="output-line cmd-prompt" style="margin-top:20px;"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="netstat -a | grep conn">netstat -a | grep conn</span></div>
       
       <div class="output-line" id="ui-contact" style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px; font-size: 13.5px; overflow-wrap: anywhere; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 5px;"></div>
     </div>
 
     <div id="sys-experience" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/experience</span>$ <span class="cmd-text" data-cmd="ls -la --timeline"></span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/experience</span>$ <span class="cmd-text" data-cmd="ls -la --timeline">ls -la --timeline</span></div>
       <div id="list-experience"></div>
     </div>
 
     <div id="sys-projects" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/builds</span>$ <span class="cmd-text" data-cmd="docker ps -a"></span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/builds</span>$ <span class="cmd-text" data-cmd="docker ps -a">docker ps -a</span></div>
       <div id="list-projects"></div>
     </div>
 
     <div id="sys-skills" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/skills</span>$ <span class="cmd-text" data-cmd="ls -l --group-directories-first"></span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/skills</span>$ <span class="cmd-text" data-cmd="ls -l --group-directories-first">ls -l --group-directories-first</span></div>
       <div id="list-skills"></div>
     </div>
 
     <div id="sys-education" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/education</span>$ <span class="cmd-text" data-cmd="history | grep certs"></span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/education</span>$ <span class="cmd-text" data-cmd="history | grep certs">history | grep certs</span></div>
       <div id="list-education"></div>
       <div id="list-certs" style="margin-top: 30px;"></div>
     </div>
@@ -350,14 +365,13 @@
   setInterval(drawMatrix, 35);
   window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initMatrix(); });
 
-  // --- TERMINAL PRINT EFFECT ---
-  let currentAnimationId = 0; // ID para evitar choques de animaciones al cambiar de pestaña rápido
+  // --- TERMINAL PRINT EFFECT CON ANTI-TRABAS ---
+  let currentAnimationId = 0; 
 
   async function runTerminalEffect(sectionId) {
     const section = document.getElementById(sectionId);
     if(!section) return;
 
-    // SISTEMA DE MEMORIA: Si la pestaña ya se animó antes, la muestra instantáneamente y no la recarga
     if (section.getAttribute('data-animated') === 'true') {
       const outputs = section.querySelectorAll('.output-line');
       outputs.forEach(el => {
@@ -370,8 +384,8 @@
       return;
     }
 
-    const animId = ++currentAnimationId; // Candado para abortar la animación si cambia de pestaña
-    section.setAttribute('data-animated', 'true'); // Marca la pestaña como ya animada
+    const animId = ++currentAnimationId; 
+    section.setAttribute('data-animated', 'true'); 
 
     const prompts = section.querySelectorAll('.cmd-prompt');
     const outputs = section.querySelectorAll('.output-line');
@@ -384,7 +398,7 @@
     document.querySelectorAll('.cursor').forEach(c => c.remove());
     
     for (let i = 0; i < prompts.length; i++) {
-      if(animId !== currentAnimationId) return; // Aborta si el usuario cambió de pestaña
+      if(animId !== currentAnimationId) return; 
 
       const prompt = prompts[i];
       const cmdTextSpan = prompt.querySelector('.cmd-text');
@@ -397,18 +411,18 @@
         prompt.appendChild(cursor);
 
         for(let c = 0; c < fullCmd.length; c++) {
-          if(animId !== currentAnimationId) return; // Aborta tipeo a la mitad
+          if(animId !== currentAnimationId) return; 
           cmdTextSpan.innerHTML += fullCmd.charAt(c);
-          await new Promise(r => setTimeout(r, 15 + Math.random() * 20)); // Tipeo un poco más rápido
+          await new Promise(r => setTimeout(r, 15 + Math.random() * 20)); 
         }
         await new Promise(r => setTimeout(r, 100)); 
       }
     }
 
     for (let i = 0; i < outputs.length; i++) {
-      if(animId !== currentAnimationId) return; // Aborta
+      if(animId !== currentAnimationId) return; 
       outputs[i].classList.add('flicker-in');
-      outputs[i].style.opacity = '1'; // Fuerza a que sea visible
+      outputs[i].style.opacity = '1'; 
       await new Promise(r => setTimeout(r, 30 + Math.random() * 50)); 
     }
   }
