@@ -8,259 +8,159 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-  /* Base Reset */
+  /* Base Reset & Anti-Overflow */
   * { box-sizing: border-box; margin: 0; padding: 0; }
   
-  body {
+  html, body {
     background-color: #010402;
     color: #00ff41;
     font-family: 'JetBrains Mono', monospace;
     line-height: 1.6;
-    overflow-x: hidden;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; 
   }
 
   /* Matrix Canvas Background */
-  #matrix-bg {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: -2; opacity: 0.8;
-  }
+  #matrix-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; opacity: 0.8; }
+  .scanlines { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15)); background-size: 100% 4px; z-index: 9999; pointer-events: none; opacity: 0.6; }
 
-  /* --- EFECTOS DE NEÓN REALISTAS --- */
-  @keyframes neon-flicker {
-    0%, 18%, 22%, 25%, 53%, 57%, 100% {
-      text-shadow: 0 0 2px #00ff41, 0 0 8px #00ff41, 0 0 15px rgba(0, 255, 65, 0.8), 0 0 30px rgba(0, 255, 65, 0.4);
-      opacity: 1;
-    }
-    20%, 24%, 55% { text-shadow: none; opacity: 0.7; }
-  }
-
-  @keyframes neon-flicker-cyan {
-    0%, 100% { text-shadow: 0 0 2px #00e5ff, 0 0 8px #00e5ff, 0 0 15px rgba(0, 229, 255, 0.8); }
-    50% { text-shadow: 0 0 1px #00e5ff, 0 0 4px #00e5ff, 0 0 8px rgba(0, 229, 255, 0.5); }
-  }
-
-  @keyframes neon-flicker-pink {
-    0%, 100% { text-shadow: 0 0 2px #ff0055, 0 0 8px #ff0055, 0 0 15px rgba(0, 255, 85, 0.8); }
-    30% { text-shadow: 0 0 1px #ff0055, 0 0 3px #ff0055; }
-  }
+  /* Efectos Neón */
+  @keyframes neon-flicker { 0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 2px #00ff41, 0 0 8px #00ff41, 0 0 15px rgba(0, 255, 65, 0.8); opacity: 1; } 20%, 24%, 55% { text-shadow: none; opacity: 0.7; } }
+  @keyframes neon-flicker-cyan { 0%, 100% { text-shadow: 0 0 2px #00e5ff, 0 0 8px #00e5ff, 0 0 15px rgba(0, 229, 255, 0.8); } 50% { text-shadow: 0 0 1px #00e5ff, 0 0 4px #00e5ff, 0 0 8px rgba(0, 229, 255, 0.5); } }
+  @keyframes neon-flicker-pink { 0%, 100% { text-shadow: 0 0 2px #ff0055, 0 0 8px #ff0055, 0 0 15px rgba(0, 255, 85, 0.8); } 30% { text-shadow: 0 0 1px #ff0055, 0 0 3px #ff0055; } }
 
   .neon-green { animation: neon-flicker 4s infinite; color: #00ff41; }
   .neon-cyan { animation: neon-flicker-cyan 3s infinite alternate; color: #00e5ff; }
   .neon-pink { animation: neon-flicker-pink 5s infinite alternate; color: #ff0055; }
 
-  /* --- ANIMACIONES DE TERMINAL --- */
   @keyframes cursor-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
   .cursor { display: inline-block; width: 8px; height: 1em; background-color: #00ff41; vertical-align: middle; animation: cursor-blink 1s infinite; margin-left: 2px; }
-
-  @keyframes print-line {
-    0% { opacity: 0; transform: translateX(-10px); }
-    100% { opacity: 1; transform: translateX(0); }
-  }
+  @keyframes print-line { 0% { opacity: 0; transform: translateX(-10px); } 100% { opacity: 1; transform: translateX(0); } }
   .flicker-in { animation: print-line 0.15s ease-out forwards; }
-
-  @keyframes window-open {
-    0% { transform: scale(0.95) translateY(20px); opacity: 0; filter: blur(10px); }
-    100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
-  }
-
-  /* Scanlines Background */
-  .scanlines {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15));
-    background-size: 100% 4px; z-index: 9999; pointer-events: none; opacity: 0.6;
-  }
+  @keyframes window-open { 0% { transform: scale(0.95) translateY(20px); opacity: 0; filter: blur(10px); } 100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); } }
 
   a { color: #00e5ff; text-decoration: none; border-bottom: 1px dashed #00e5ff; transition: 0.3s; text-shadow: 0 0 5px rgba(0, 229, 255, 0.5); }
   a:hover { background-color: #00e5ff; color: #010402; text-shadow: none; box-shadow: 0 0 10px #00e5ff; }
 
   /* ==========================================
-     DESKTOP LAYOUT (TERMINAL WINDOW)
+     PANTALLAS DE INICIO Y CARGA
+     ========================================== */
+  #lang-screen, #loader {
+    position: fixed; inset: 0; background-color: #010402; z-index: 10000;
+    display: flex; justify-content: center; align-items: center; 
+    transition: opacity 0.4s ease; padding: 20px;
+  }
+  #loader { display: none; /* Oculto inicialmente */ }
+  
+  .boot-container {
+    border: 1px solid rgba(0, 255, 65, 0.5); background: rgba(3, 8, 5, 0.95);
+    padding: 30px 40px; border-radius: 8px; box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);
+    display: flex; flex-direction: column; max-width: 90vw; width: 100%; max-width: 450px;
+  }
+  .spinner { font-size: 28px; margin-bottom: 15px; text-shadow: 0 0 10px #00ff41; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(0,255,65,0.3); padding-bottom: 10px; }
+  #boot-text { color: #00e5ff; text-align: left; white-space: pre-wrap; font-size: 14px; text-shadow: 0 0 5px #00e5ff; }
+
+  .lang-btn {
+    background: rgba(0,0,0,0.6); border: 1px solid #00ff41; color: #00ff41; padding: 12px 20px;
+    cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700;
+    transition: all 0.3s; margin-top: 15px; width: 100%; text-shadow: 0 0 5px rgba(0,255,65,0.5);
+  }
+  .lang-btn:hover { background: #00ff41; color: #010402; box-shadow: 0 0 20px #00ff41; text-shadow: none; transform: translateY(-2px); }
+
+  /* ==========================================
+     DESKTOP LAYOUT (ESTRUCTURA BLINDADA)
      ========================================== */
   .terminal-window {
-    max-width: 950px;
-    margin: 40px auto;
-    border: 1px solid #00ff41;
-    border-radius: 8px;
-    background-color: rgba(3, 8, 5, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    width: 90vw; max-width: 950px; height: 85vh; margin: 7.5vh auto; border: 1px solid #00ff41; border-radius: 8px;
+    background-color: rgba(3, 8, 5, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 0 40px rgba(0, 255, 65, 0.3), inset 0 0 30px rgba(0, 255, 65, 0.2);
-    position: relative;
-    overflow: hidden;
-    display: none; 
+    position: relative; display: none; flex-direction: column; 
   }
 
-  /* GRID 3D */
   .terminal-window::before {
     content: ''; position: absolute; top: 20%; left: -50%; width: 200%; height: 150%;
-    background-image: 
-      linear-gradient(rgba(0, 255, 65, 0.25) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 255, 65, 0.25) 1px, transparent 1px);
-    background-size: 50px 50px; transform-origin: center top;
-    animation: grid-3d-scroll 2s linear infinite; z-index: 0; pointer-events: none;
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%);
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%);
+    background-image: linear-gradient(rgba(0, 255, 65, 0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 65, 0.25) 1px, transparent 1px);
+    background-size: 50px 50px; transform-origin: center top; animation: grid-3d-scroll 2s linear infinite; z-index: 0; pointer-events: none;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%);
   }
 
-  @keyframes grid-3d-scroll {
-    0% { transform: perspective(600px) rotateX(65deg) translateY(0); }
-    100% { transform: perspective(600px) rotateX(65deg) translateY(50px); }
-  }
-
-  .terminal-window.loaded {
-    display: block; animation: window-open 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  }
+  @keyframes grid-3d-scroll { 0% { transform: perspective(600px) rotateX(65deg) translateY(0); } 100% { transform: perspective(600px) rotateX(65deg) translateY(50px); } }
+  .terminal-window.loaded { display: flex; animation: window-open 0.5s ease-out forwards; }
 
   .terminal-header {
-    background-color: #00ff41; color: #010402; padding: 8px 16px;
-    font-weight: 800; display: flex; justify-content: space-between;
-    align-items: center; font-size: 15px; box-shadow: 0 0 15px #00ff41; position: relative; z-index: 10;
+    flex: 0 0 40px; background-color: #00ff41; color: #010402; padding: 0 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; font-size: 15px; box-shadow: 0 0 15px #00ff41; position: relative; z-index: 10;
   }
 
-  .terminal-body { padding: 30px; position: relative; z-index: 10; }
+  /* ZONA DE SCROLL INTERNO PC */
+  .terminal-body { flex: 1 1 auto; padding: 25px; position: relative; z-index: 10; overflow-y: auto; overflow-x: hidden; }
+  .terminal-body::-webkit-scrollbar { width: 8px; }
+  .terminal-body::-webkit-scrollbar-track { background: rgba(1, 4, 2, 0.5); }
+  .terminal-body::-webkit-scrollbar-thumb { background: rgba(0, 255, 65, 0.5); border-radius: 4px; }
+  .terminal-body::-webkit-scrollbar-thumb:hover { background: #00ff41; }
 
   nav {
-    display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 30px;
-    border-bottom: 1px solid rgba(0, 255, 65, 0.4); padding-bottom: 15px; position: relative;
+    display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid rgba(0, 255, 65, 0.4); padding-bottom: 15px; 
+    position: sticky; top: 0; background: rgba(3, 8, 5, 0.95); z-index: 99; padding-top: 10px; margin-top: -10px;
   }
 
   .nav-btn {
-    background: transparent; border: 1px solid #00ff41; color: #00ff41;
-    padding: 8px 16px; cursor: pointer; font-family: 'JetBrains Mono', monospace;
-    font-weight: 700; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    position: relative; overflow: hidden; text-shadow: 0 0 5px rgba(0,255,65,0.5);
-    background-color: rgba(0,0,0,0.6);
+    background: transparent; border: 1px solid #00ff41; color: #00ff41; padding: 8px 16px; cursor: pointer; font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; transition: all 0.3s; position: relative; overflow: hidden; text-shadow: 0 0 5px rgba(0,255,65,0.5); background-color: rgba(0,0,0,0.8);
   }
-
-  .nav-btn::before {
-    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-    background: rgba(0, 255, 65, 0.2); transition: left 0.3s; z-index: -1;
-  }
-
-  .nav-btn:hover::before { left: 0; }
-  .nav-btn:hover, .nav-btn.active {
-    background: #00ff41; color: #010402; box-shadow: 0 0 20px #00ff41;
-    transform: translateY(-2px); text-shadow: none;
-  }
+  .nav-btn:hover, .nav-btn.active { background: #00ff41; color: #010402; box-shadow: 0 0 20px #00ff41; transform: translateY(-2px); text-shadow: none; }
 
   .section { display: none; position: relative; }
   .section.active { display: block; }
 
   .cmd-prompt { margin-bottom: 25px; font-size: 16px; overflow-wrap: break-word; word-break: break-word; line-height: 1.4; }
-  .cmd-prompt span.user { font-weight: bold; } 
-  .cmd-prompt span.path { font-weight: bold; }
-  .cmd-text { color: #ffffff; text-shadow: 0 0 5px #ffffff; white-space: pre-wrap; }
+  .cmd-prompt span.user, .cmd-prompt span.path { font-weight: bold; }
+  .cmd-text { color: #ffffff; text-shadow: 0 0 5px #ffffff; white-space: pre-wrap; word-break: break-all;}
   
   .output-line { opacity: 0; }
 
   .data-block {
     margin-bottom: 25px; padding-left: 15px; border-left: 2px solid rgba(0, 255, 65, 0.4);
-    background: linear-gradient(90deg, rgba(0,255,65,0.1) 0%, transparent 100%);
-    background-size: 200% 100%; background-position: 100% 0; transition: 0.3s;
+    background: linear-gradient(90deg, rgba(0,255,65,0.1) 0%, transparent 100%); background-size: 200% 100%; background-position: 100% 0; transition: 0.3s;
     background-color: rgba(0,0,0,0.4); border-radius: 0 4px 4px 0;
   }
-  .data-block:hover { 
-    border-left-color: #00ff41; background-position: 0 0;
-    box-shadow: -5px 0 15px rgba(0,255,65,0.2); transform: translateX(5px);
-  }
+  .data-block:hover { border-left-color: #00ff41; background-position: 0 0; box-shadow: -5px 0 15px rgba(0,255,65,0.2); transform: translateX(5px); }
 
   .data-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
   .data-subtitle { font-size: 14px; color: #aaaaaa; margin-bottom: 10px; }
   .data-desc { font-size: 15px; color: #dddddd; margin-bottom: 8px;}
 
   .tech-stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; padding-bottom: 5px;}
-  .tech-badge {
-    background-color: rgba(0, 0, 0, 0.6); color: #00ff41; padding: 4px 8px;
-    font-size: 12px; border-radius: 4px; border: 1px solid rgba(0, 255, 65, 0.4); transition: 0.2s;
-  }
-  .data-block:hover .tech-badge { border-color: #00ff41; box-shadow: 0 0 8px rgba(0,255,65,0.5); background-color: rgba(0,255,65,0.15);}
+  .tech-badge { background-color: rgba(0, 0, 0, 0.6); color: #00ff41; padding: 4px 8px; font-size: 12px; border-radius: 4px; border: 1px solid rgba(0, 255, 65, 0.4); }
 
   .skill-cat { font-size: 16px; margin-bottom: 15px; text-transform: uppercase; font-weight: bold;}
   .skill-cloud { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
-  .skill-module {
-    font-size: 13.5px; color: #dddddd; background: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(0, 255, 65, 0.3); padding: 6px 12px; border-radius: 3px;
-    transition: all 0.3s; cursor: default; display: flex; align-items: center;
-  }
-  .skill-module:hover {
-    background: rgba(0, 255, 65, 0.2); border-color: #00ff41; color: #ffffff;
-    transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
-  }
-  .bracket { font-weight: bold; margin: 0 6px; transition: 0.3s; }
-  .skill-module:hover .bracket { color: #ff0055; text-shadow: 0 0 8px #ff0055; margin: 0 10px; }
+  .skill-module { font-size: 13.5px; color: #dddddd; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 255, 65, 0.3); padding: 6px 12px; border-radius: 3px; display: flex; align-items: center; transition: 0.3s; }
+  .skill-module:hover { border-color: #00ff41; color: #ffffff; transform: scale(1.05); box-shadow: 0 0 15px rgba(0, 255, 65, 0.4); }
+  .bracket { font-weight: bold; margin: 0 6px; }
+  .skill-module:hover .bracket { color: #ff0055; text-shadow: 0 0 8px #ff0055; }
 
-  /* --- LOADER --- */
-  #loader {
-    position: fixed; inset: 0; background-color: #010402; z-index: 10000;
-    display: flex; justify-content: center; align-items: center; 
-    transition: opacity 0.5s ease; padding: 20px;
-  }
-  
-  .boot-container {
-    border: 1px solid rgba(0, 255, 65, 0.5); background: rgba(3, 8, 5, 0.95);
-    padding: 30px 40px; border-radius: 8px; box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);
-    display: flex; flex-direction: column; align-items: flex-start;
-    max-width: 90vw; width: fit-content; min-width: 300px;
-  }
-
-  .spinner { font-size: 28px; margin-bottom: 15px; text-shadow: 0 0 10px #00ff41; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(0,255,65,0.3); padding-bottom: 10px; width: 100%;}
-  .spinner .blink { animation: cursor-blink 0.5s infinite; }
-  #boot-text { color: #00e5ff; text-align: left; white-space: pre-wrap; font-size: 14px; text-shadow: 0 0 5px #00e5ff; line-height: 1.6; }
-
-  /* --- MOBILE APP MODE --- */
+  /* ==========================================
+     MOBILE APP MODE
+     ========================================== */
   @media (max-width: 768px) {
-    body { background-color: #010402; }
-    #matrix-bg { opacity: 0.3; }
+    .terminal-window { width: 100vw; height: 100dvh; margin: 0; border: none; border-radius: 0; }
+    .terminal-header { padding-top: max(10px, env(safe-area-inset-top)); height: auto; min-height: 40px; }
+    .terminal-body { padding: 15px; }
 
-    .terminal-window { 
-      margin: 0; border: none; border-radius: 0; width: 100vw; min-height: 100vh;
-      box-shadow: none; display: none; flex-direction: column;
-    }
-    
-    .terminal-window::before { top: 10%; background-size: 40px 40px; }
-    .terminal-window.loaded { display: flex; animation: none; transform: none; }
-    
-    .terminal-header { 
-      position: sticky; 
-      top: 0; 
-      z-index: 100; 
-      font-size: 13px; 
-      /* ESTA LÍNEA EVITA QUE SE ESCONDA BAJO LA HORA/CÁMARA DEL CELULAR */
-      padding: max(10px, env(safe-area-inset-top, 10px)) 15px 10px 15px; 
-    }
-    .terminal-body { padding: 15px 15px 40px 15px; flex: 1; overflow-x: hidden; }
-
-    nav { 
-      position: sticky; 
-      /* Ajustamos el top para que no se superponga con el nuevo header */
-      top: calc(30px + env(safe-area-inset-top, 0px)); 
-      z-index: 99; background-color: rgba(3, 8, 5, 0.98);
-      flex-wrap: nowrap; overflow-x: auto; padding: 10px 0 15px 0;
-      margin-bottom: 20px; margin-left: -15px; margin-right: -15px; padding-left: 15px;
-      gap: 10px; border-bottom: 1px solid rgba(0, 255, 65, 0.5);
-      -webkit-overflow-scrolling: touch; scrollbar-width: none; box-shadow: 0 5px 15px rgba(0,0,0,0.8);
-    }
+    nav { top: -15px; padding-top: 15px; margin-left: -15px; margin-right: -15px; padding-left: 15px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     nav::-webkit-scrollbar { display: none; } 
-    .nav-btn { flex: 0 0 auto; font-size: 12px; padding: 6px 12px; border-radius: 4px; }
 
-    .cmd-prompt { 
-      font-size: 13px; 
-      margin-bottom: 15px; 
-      /* Quitado el fondo gris oscuro para que respire más limpio */
-      background: transparent; 
-      padding: 0; 
-    }
+    .terminal-body { scrollbar-width: none; -ms-overflow-style: none; }
+    .terminal-body::-webkit-scrollbar { display: none; width: 0; }
+    .nav-btn { flex: 0 0 auto; font-size: 12px; padding: 6px 10px; }
+
+    .cmd-prompt { font-size: 13px; margin-bottom: 15px; }
     #ui-name { font-size: 26px !important; line-height: 1.1; }
     #ui-role { font-size: 15px !important; margin-bottom: 15px; }
-    
-    .data-block { padding-left: 10px; margin-bottom: 20px; }
-    .data-block:hover { transform: none; box-shadow: none; }
-    .data-title { font-size: 16px; }
-    .data-desc { font-size: 14px; }
-    
+    .data-title { font-size: 16px; } .data-desc { font-size: 14px; }
     .skill-module { font-size: 12px; padding: 5px 8px; }
-    .skill-module:hover { transform: none; }
+    .data-block:hover { transform: none; } .skill-module:hover { transform: none; }
   }
 </style>
 </head>
@@ -269,9 +169,18 @@
 <canvas id="matrix-bg"></canvas>
 <div class="scanlines"></div>
 
+<div id="lang-screen">
+  <div class="boot-container" style="align-items: center; text-align: center;">
+    <div class="neon-pink" style="font-size: 22px; font-weight: bold; margin-bottom: 10px;">[ SYSTEM LOGIN ]</div>
+    <div style="color: #00e5ff; margin-bottom: 20px;">Please select your interface language<br>Por favor selecciona tu idioma</div>
+    <button class="lang-btn" onclick="initSystem('en')">[1] ENGLISH</button>
+    <button class="lang-btn" onclick="initSystem('es')">[2] ESPAÑOL</button>
+  </div>
+</div>
+
 <div id="loader">
   <div class="boot-container">
-    <div class="spinner neon-green">[ <span class="blink">■</span>■■■ ] <span style="font-size: 16px; margin-left: 5px;">SYS_INIT</span></div>
+    <div class="spinner neon-green">[ <span class="cursor">■</span>■■■ ] <span style="font-size: 16px; margin-left: 5px;">SYS_INIT</span></div>
     <div id="boot-text"></div>
   </div>
 </div>
@@ -279,23 +188,23 @@
 <div class="terminal-window" id="main-terminal">
   <div class="terminal-header">
     <span>root@server:~</span>
-    <span style="cursor:pointer;" onclick="location.reload()">[REBOOT]</span>
+    <span id="ui-reboot" style="cursor:pointer;" onclick="location.reload()">[REBOOT]</span>
   </div>
   
-  <div class="terminal-body">
+  <div class="terminal-body" id="terminal-body">
     <nav id="nav-bar">
-      <button class="nav-btn active" data-target="sys-profile">./profile.sh</button>
-      <button class="nav-btn" data-target="sys-experience">./experience.sh</button>
-      <button class="nav-btn" data-target="sys-projects">./builds.sh</button>
-      <button class="nav-btn" data-target="sys-skills">./skills.sh</button>
-      <button class="nav-btn" data-target="sys-education">./education.sh</button>
+      <button class="nav-btn active" data-target="sys-profile" id="nav-profile">./profile.sh</button>
+      <button class="nav-btn" data-target="sys-experience" id="nav-exp">./experience.sh</button>
+      <button class="nav-btn" data-target="sys-projects" id="nav-proj">./builds.sh</button>
+      <button class="nav-btn" data-target="sys-skills" id="nav-skills">./skills.sh</button>
+      <button class="nav-btn" data-target="sys-education" id="nav-edu">./education.sh</button>
     </nav>
 
     <div id="sys-profile" class="section active">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="cat user_info.txt">cat user_info.txt</span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan" id="path-profile">~/profile</span>$ <span class="cmd-text" data-cmd="cat user_info.txt">cat user_info.txt</span></div>
       
       <div class="output-line" style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-        <h1 class="neon-green" id="ui-name" style="font-size: clamp(28px, 5vw, 48px); margin-bottom: 5px;">...</h1>
+        <h1 class="neon-green" id="ui-name" style="font-size: clamp(26px, 6vw, 48px); margin-bottom: 5px;">...</h1>
         <div id="ui-role" class="neon-cyan" style="font-size: 20px;">...</div>
       </div>
       
@@ -303,30 +212,30 @@
         <p id="ui-bio" style="color: #eee; font-size: 14.5px;"></p>
       </div>
 
-      <div class="output-line cmd-prompt" style="margin-top:20px;"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="netstat -a | grep conn">netstat -a | grep conn</span></div>
+      <div class="output-line cmd-prompt" style="margin-top:20px;"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan" id="path-profile-2">~/profile</span>$ <span class="cmd-text" data-cmd="netstat -a | grep conn">netstat -a | grep conn</span></div>
       
       <div class="output-line" id="ui-contact" style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px; font-size: 13.5px; overflow-wrap: anywhere; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 5px;"></div>
     </div>
 
     <div id="sys-experience" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/experience</span>$ <span class="cmd-text" data-cmd="ls -la --timeline">ls -la --timeline</span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan" id="path-exp">~/experience</span>$ <span class="cmd-text" data-cmd="ls -la --timeline">ls -la --timeline</span></div>
       <div id="list-experience"></div>
     </div>
 
     <div id="sys-projects" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/builds</span>$ <span class="cmd-text" data-cmd="docker ps -a">docker ps -a</span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan" id="path-proj">~/builds</span>$ <span class="cmd-text" data-cmd="docker ps -a">docker ps -a</span></div>
       <div id="list-projects"></div>
     </div>
 
     <div id="sys-skills" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/skills</span>$ <span class="cmd-text" data-cmd="ls -l --group-directories-first">ls -l --group-directories-first</span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan" id="path-skills">~/skills</span>$ <span class="cmd-text" data-cmd="ls -l --groups">ls -l --groups</span></div>
       <div id="list-skills"></div>
     </div>
 
     <div id="sys-education" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/education</span>$ <span class="cmd-text" data-cmd="history | grep certs">history | grep certs</span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan" id="path-edu">~/education</span>$ <span class="cmd-text" data-cmd="history | grep certs">history | grep certs</span></div>
       <div id="list-education"></div>
-      <div id="list-certs" style="margin-top: 30px;"></div>
+      <div id="list-certs" style="margin-top: 30px; padding-bottom: 20px;"></div>
     </div>
 
   </div>
@@ -334,52 +243,85 @@
 
 <script>
   // --- MATRIX CANVAS ANIMATION ---
-  const canvas = document.getElementById('matrix-bg');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const canvas = document.getElementById('matrix-bg'); const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()<>{}[]/\\|'.split('');
-  const fontSize = 14;
-  let columns = Math.floor(canvas.width / fontSize);
-  let drops = [];
-  
-  function initMatrix() {
-    columns = Math.floor(canvas.width / fontSize);
-    drops = [];
-    for(let x = 0; x < columns; x++) { drops[x] = 1; }
-  }
+  const fontSize = 14; let columns = Math.floor(canvas.width / fontSize); let drops = [];
+  function initMatrix() { columns = Math.floor(canvas.width / fontSize); drops = []; for(let x=0; x<columns; x++) drops[x]=1; }
   initMatrix();
-  
   function drawMatrix() {
-    ctx.fillStyle = 'rgba(1, 4, 2, 0.08)'; 
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#0F0';
-    ctx.font = fontSize + 'px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(1, 4, 2, 0.08)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0F0'; ctx.font = fontSize + 'px "JetBrains Mono", monospace';
     for(let i = 0; i < drops.length; i++) {
-      const text = letters[Math.floor(Math.random() * letters.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-      if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) { drops[i] = 0; }
+      ctx.fillText(letters[Math.floor(Math.random() * letters.length)], i * fontSize, drops[i] * fontSize);
+      if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
       drops[i]++;
     }
   }
   setInterval(drawMatrix, 35);
   window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initMatrix(); });
 
-  // --- TERMINAL PRINT EFFECT CON ANTI-TRABAS ---
-  let currentAnimationId = 0; 
+  // --- TRADUCTOR Y ESTADO ---
+  let currentLang = 'en';
 
+  const dict = {
+    en: {
+      navPro: "./profile.sh", navExp: "./experience.sh", navProj: "./builds.sh", navSkill: "./skills.sh", navEdu: "./education.sh",
+      pathPro: "~/profile", pathExp: "~/experience", pathProj: "~/builds", pathSkill: "~/skills", pathEdu: "~/education",
+      reboot: "[REBOOT]", loc: "LOC", mail: "MAIL", cvBtn: "[ VIEW FULL CV ]", stack: "> Stack:", deploy: "[ EXECUTE DEPLOYMENT ]",
+      degTitle: ">> Degrees", certTitle: ">> Credentials", boot: ["Establishing secure connection...", "Querying database...", "Decrypting data matrices...", "Initializing UI components..."], ready: "[READY] Launching interface..."
+    },
+    es: {
+      navPro: "./perfil.sh", navExp: "./experiencia.sh", navProj: "./proyectos.sh", navSkill: "./habilidades.sh", navEdu: "./educacion.sh",
+      pathPro: "~/perfil", pathExp: "~/experiencia", pathProj: "~/proyectos", pathSkill: "~/habilidades", pathEdu: "~/educacion",
+      reboot: "[REINICIAR]", loc: "UBIC", mail: "CORREO", cvBtn: "[ DESCARGAR CV COMPLETO ]", stack: "> Tecnologías:", deploy: "[ VER PROYECTO / DEPLOY ]",
+      degTitle: ">> Títulos Académicos", certTitle: ">> Certificaciones", boot: ["Estableciendo conexión segura...", "Consultando base de datos...", "Desencriptando matrices...", "Iniciando componentes de UI..."], ready: "[LISTO] Lanzando interfaz..."
+    }
+  };
+
+  function initSystem(lang) {
+    currentLang = lang;
+    document.getElementById('lang-screen').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('lang-screen').style.display = 'none';
+      document.getElementById('loader').style.display = 'flex';
+      
+      // Aplicar traducciones estáticas
+      const t = dict[lang];
+      document.getElementById('nav-profile').textContent = t.navPro;
+      document.getElementById('nav-exp').textContent = t.navExp;
+      document.getElementById('nav-proj').textContent = t.navProj;
+      document.getElementById('nav-skills').textContent = t.navSkill;
+      document.getElementById('nav-edu').textContent = t.navEdu;
+      
+      document.getElementById('path-profile').textContent = t.pathPro;
+      document.getElementById('path-profile-2').textContent = t.pathPro;
+      document.getElementById('path-exp').textContent = t.pathExp;
+      document.getElementById('path-proj').textContent = t.pathProj;
+      document.getElementById('path-skills').textContent = t.pathSkill;
+      document.getElementById('path-edu').textContent = t.pathEdu;
+      document.getElementById('ui-reboot').textContent = t.reboot;
+
+      loadData();
+    }, 400);
+  }
+
+  // Helper para sacar el dato de la columna correcta (busca _es si estamos en español)
+  const getDato = (obj, key) => {
+    if (!obj) return '';
+    if (currentLang === 'es' && obj[key + '_es']) return clean(obj[key + '_es']);
+    return clean(obj[key] || '');
+  };
+
+  // --- TERMINAL PRINT EFFECT ---
+  let currentAnimationId = 0; 
   async function runTerminalEffect(sectionId) {
     const section = document.getElementById(sectionId);
     if(!section) return;
 
     if (section.getAttribute('data-animated') === 'true') {
-      const outputs = section.querySelectorAll('.output-line');
-      outputs.forEach(el => {
-        el.style.opacity = '1';
-        el.classList.remove('flicker-in');
-      });
-      const cmdTexts = section.querySelectorAll('.cmd-text');
-      cmdTexts.forEach(cmd => { cmd.innerHTML = cmd.getAttribute('data-cmd') || ''; });
+      section.querySelectorAll('.output-line').forEach(el => { el.style.opacity = '1'; el.classList.remove('flicker-in'); });
+      section.querySelectorAll('.cmd-text').forEach(cmd => { cmd.innerHTML = cmd.getAttribute('data-cmd') || ''; });
       section.querySelectorAll('.cursor').forEach(c => c.remove());
       return;
     }
@@ -390,25 +332,17 @@
     const prompts = section.querySelectorAll('.cmd-prompt');
     const outputs = section.querySelectorAll('.output-line');
     
-    outputs.forEach(el => {
-      el.style.opacity = '0';
-      el.classList.remove('flicker-in');
-    });
-
+    outputs.forEach(el => { el.style.opacity = '0'; el.classList.remove('flicker-in'); });
     document.querySelectorAll('.cursor').forEach(c => c.remove());
     
     for (let i = 0; i < prompts.length; i++) {
       if(animId !== currentAnimationId) return; 
-
       const prompt = prompts[i];
       const cmdTextSpan = prompt.querySelector('.cmd-text');
       if(cmdTextSpan) {
         const fullCmd = cmdTextSpan.getAttribute('data-cmd') || '';
         cmdTextSpan.innerHTML = '';
-        
-        const cursor = document.createElement('span');
-        cursor.className = 'cursor';
-        prompt.appendChild(cursor);
+        const cursor = document.createElement('span'); cursor.className = 'cursor'; prompt.appendChild(cursor);
 
         for(let c = 0; c < fullCmd.length; c++) {
           if(animId !== currentAnimationId) return; 
@@ -421,169 +355,133 @@
 
     for (let i = 0; i < outputs.length; i++) {
       if(animId !== currentAnimationId) return; 
-      outputs[i].classList.add('flicker-in');
-      outputs[i].style.opacity = '1'; 
+      outputs[i].classList.add('flicker-in'); outputs[i].style.opacity = '1'; 
       await new Promise(r => setTimeout(r, 30 + Math.random() * 50)); 
     }
   }
 
-  // --- OBTENCIÓN DE DATOS Y RENDERIZADO ---
-  const API_URL = 'https://script.google.com/macros/s/AKfycbx9LGyGgz47Yt36HD5j4WeSezaK6UAdLXmHo9NSHkN6CcROz1cpL9-Abrp4acKzdIQy/exec';
-
-  const clean = (str) => { 
-    if(!str) return '';
-    const div = document.createElement('div'); 
-    div.textContent = str; 
-    return div.innerHTML; 
-  };
-  
-  const parseLink = (url) => {
-    if (!url) return '';
-    let link = clean(url).trim();
-    if (link.length > 0 && !link.startsWith('http://') && !link.startsWith('https://')) { link = 'https://' + link; }
-    return link;
-  };
-
-  const bootLines = [
-    "Establishing secure connection to AppScripts...",
-    "Querying Google Sheets database...",
-    "Decrypting data matrices...",
-    "Initializing UI components..."
-  ];
-  
-  async function simulateBoot() {
-    const bootText = document.getElementById('boot-text');
-    for(let i = 0; i < bootLines.length; i++) {
-      bootText.innerHTML += bootLines[i] + "<br>";
-      await new Promise(r => setTimeout(r, 150 + Math.random() * 150)); 
-    }
-  }
+  // --- DATA FETCH ---
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwCklKmjAYFYDabyzu44w6zKuMX_eeJ_-xmHxIZxdg2wveOSCYapzoy_tr2vPc4LBbGug/exec';
+  const clean = str => { if(!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; };
+  const parseLink = url => { let l = clean(url).trim(); if(l && !l.startsWith('http')) l = 'https://' + l; return l; };
 
   async function loadData() {
-    const bootAnim = simulateBoot();
     const bootText = document.getElementById('boot-text');
+    const bootLines = dict[currentLang].boot;
+    
+    let bootDone = false;
+    (async () => {
+      for(let i=0; i<bootLines.length; i++) {
+        if(bootDone) break;
+        bootText.innerHTML += bootLines[i] + "<br>";
+        await new Promise(r => setTimeout(r, 200));
+      }
+    })();
 
     try {
-      const response = await fetch(API_URL, { redirect: "follow" });
+      const response = await fetch(`${API_URL}?lang=${currentLang}`, { redirect: "follow" });
       if (!response.ok) throw new Error(`HTTP Error Status: ${response.status}`);
-
       const data = await response.json();
-      await bootAnim; 
       
+      bootDone = true;
       const info = (data.info && data.info.length > 0) ? data.info[0] : {};
+      
       renderProfile(info);
       renderExperience(Array.isArray(data.experiencia) ? data.experiencia : []);
       renderProjects(Array.isArray(data.proyectos) ? data.proyectos : []);
       renderSkills(Array.isArray(data.skills) ? data.skills : []);
       renderEducation(Array.isArray(data.educacion) ? data.educacion : [], Array.isArray(data.certificaciones) ? data.certificaciones : []);
 
-      bootText.innerHTML += "<span class='neon-cyan'>[READY] Launching interface...</span><br>";
+      bootText.innerHTML += `<span class='neon-cyan'>${dict[currentLang].ready}</span><br>`;
 
-      const loader = document.getElementById('loader');
       setTimeout(() => {
-        loader.style.opacity = '0';
+        document.getElementById('loader').style.opacity = '0';
         setTimeout(() => {
-          loader.style.display = 'none';
+          document.getElementById('loader').style.display = 'none';
           document.getElementById('main-terminal').classList.add('loaded'); 
           runTerminalEffect('sys-profile');
-        }, 500);
-      }, 400);
+        }, 400);
+      }, 300);
       
     } catch (error) {
-      bootText.innerHTML += `<br><span class='neon-pink'>[FATAL ERROR] Data fetch failed.</span><br>`;
-      bootText.innerHTML += `<span style="color:#aaa;">Detalle: ${clean(error.message)}</span>`;
-      console.error(error);
+      bootDone = true;
+      bootText.innerHTML += `<br><span class='neon-pink'>[FATAL ERROR] Data fetch failed.</span><br><span style="color:#aaa;">${clean(error.message)}</span>`;
     }
   }
 
   function renderProfile(info) {
     if (!info) return;
-    document.getElementById('ui-name').innerHTML = clean(info.nombre) || 'Usuario';
-    document.getElementById('ui-role').innerHTML = `> ${clean(info.titulo) || 'Admin'}`;
-    document.getElementById('ui-bio').innerHTML = clean(info.bio) || ''; 
+    document.getElementById('ui-name').innerHTML = getDato(info, 'nombre') || 'Usuario';
+    document.getElementById('ui-role').innerHTML = `> ${getDato(info, 'titulo') || 'Admin'}`;
+    document.getElementById('ui-bio').innerHTML = getDato(info, 'bio'); 
     
     const contactHtml = [];
-    if (info.ubicacion) contactHtml.push(`<div><span class="neon-cyan">LOC</span> : ${clean(info.ubicacion)}</div>`);
-    if (info.email) contactHtml.push(`<div><span class="neon-cyan">MAIL</span>: <a href="mailto:${clean(info.email)}">${clean(info.email)}</a></div>`);
+    if (info.ubicacion) contactHtml.push(`<div><span class="neon-cyan">${dict[currentLang].loc}</span> : ${getDato(info, 'ubicacion')}</div>`);
+    if (info.email) contactHtml.push(`<div><span class="neon-cyan">${dict[currentLang].mail}</span>: <a href="mailto:${clean(info.email)}">${clean(info.email)}</a></div>`);
     if (info.github) contactHtml.push(`<div><span class="neon-cyan">GIT</span> : <a href="${parseLink(info.github)}" target="_blank">${clean(info.github)}</a></div>`);
     if (info.linkedin) contactHtml.push(`<div><span class="neon-cyan">LINK</span>: <a href="${parseLink(info.linkedin)}" target="_blank">${clean(info.linkedin)}</a></div>`);
     
+    // Buscar link del CV inteligentemente en todas las columnas
+    let cvLink = '';
+    for (let k of Object.keys(info)) {
+      const lowerK = k.toLowerCase().trim();
+      if (lowerK.includes('cv') || lowerK.includes('drive') || lowerK.includes('curriculum') || lowerK.includes('link')) {
+        if (info[k] && info[k].toString().includes('http')) { cvLink = info[k]; break; }
+      }
+    }
+    
+    if (cvLink) {
+      contactHtml.push(`
+        <div style="margin-top: 15px; margin-bottom: 5px;">
+          <span class="neon-pink">>></span> 
+          <a href="${parseLink(cvLink)}" target="_blank" style="font-weight: 800; font-size: 15px; border: 1px solid #00ff41; padding: 6px 12px; border-radius: 4px; display: inline-block; margin-top: 5px; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2); background: rgba(0,255,65,0.1); color: #00ff41;">${dict[currentLang].cvBtn}</a>
+        </div>
+      `);
+    }
     document.getElementById('ui-contact').innerHTML = contactHtml.join('');
   }
 
   function renderExperience(exp) {
-    if (exp.length === 0) return;
-    const html = exp.map(item => `
+    document.getElementById('list-experience').innerHTML = exp.map(item => `
       <div class="data-block output-line">
-        <div class="data-title neon-cyan">${clean(item.puesto)} @ ${clean(item.empresa)}</div>
-        <div class="data-subtitle">[ ${clean(item.fecha_inicio)} - ${clean(item.fecha_fin)} ]</div>
-        <div class="data-desc">> ${clean(item.descripcion)}</div>
-        ${item.tags ? `<div class="tech-stack">${item.tags.split(',').map(t => `<span class="tech-badge">${clean(t.trim())}</span>`).join('')}</div>` : ''}
+        <div class="data-title neon-cyan">${getDato(item, 'puesto')} @ ${getDato(item, 'empresa')}</div>
+        <div class="data-subtitle">[ ${getDato(item, 'fecha_inicio')} - ${getDato(item, 'fecha_fin')} ]</div>
+        <div class="data-desc">> ${getDato(item, 'descripcion')}</div>
+        ${item.tags ? `<div class="tech-stack">${getDato(item, 'tags').split(',').map(t => `<span class="tech-badge">${clean(t.trim())}</span>`).join('')}</div>` : ''}
       </div>
     `).join('');
-    document.getElementById('list-experience').innerHTML = html;
   }
 
   function renderProjects(proj) {
-    if (proj.length === 0) return;
-    const html = proj.map(item => `
+    document.getElementById('list-projects').innerHTML = proj.map(item => `
       <div class="data-block output-line">
-        <div class="data-title neon-cyan">${clean(item.nombre)}</div>
-        <div class="data-desc">${clean(item.descripcion)}</div>
-        <div style="color:#00ff41; font-size: 13px; text-shadow:0 0 5px rgba(0,255,65,0.4);">> Stack: ${clean(item.tecnologias)}</div>
-        ${item.link ? `<a href="${parseLink(item.link)}" target="_blank" style="display:inline-block; margin-top:10px;">[ EXECUTE DEPLOYMENT ]</a>` : ''}
+        <div class="data-title neon-cyan">${getDato(item, 'nombre')}</div>
+        <div class="data-desc">${getDato(item, 'descripcion')}</div>
+        <div style="color:#00ff41; font-size: 13px; text-shadow:0 0 5px rgba(0,255,65,0.4);">${dict[currentLang].stack} ${getDato(item, 'tecnologias')}</div>
+        ${item.link ? `<a href="${parseLink(item.link)}" target="_blank" style="display:inline-block; margin-top:10px;">${dict[currentLang].deploy}</a>` : ''}
       </div>
     `).join('');
-    document.getElementById('list-projects').innerHTML = html;
   }
 
   function renderSkills(skills) {
-    if (skills.length === 0) return;
     const groups = {};
-    skills.forEach(s => {
-      const cat = s.categoria || 'General';
-      if(!groups[cat]) groups[cat] = [];
-      groups[cat].push(s.skill);
-    });
-    
-    const html = Object.entries(groups).map(([cat, items]) => `
+    skills.forEach(s => { const cat = getDato(s, 'categoria') || 'General'; if(!groups[cat]) groups[cat] = []; groups[cat].push(getDato(s, 'skill')); });
+    document.getElementById('list-skills').innerHTML = Object.entries(groups).map(([cat, items]) => `
       <div class="output-line" style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 5px; margin-bottom: 20px;">
         <div class="skill-cat neon-pink">>> ${clean(cat)}</div>
-        <div class="skill-cloud">
-          ${items.map(i => `
-            <div class="skill-module">
-              <span class="bracket neon-cyan">[</span>
-              <span>${clean(i)}</span>
-              <span class="bracket neon-cyan">]</span>
-            </div>
-          `).join('')}
-        </div>
+        <div class="skill-cloud">${items.map(i => `<div class="skill-module"><span class="bracket neon-cyan">[</span><span>${clean(i)}</span><span class="bracket neon-cyan">]</span></div>`).join('')}</div>
       </div>
     `).join('');
-    
-    document.getElementById('list-skills').innerHTML = html;
   }
 
   function renderEducation(edu, certs) {
-    let html = '<h3 class="neon-cyan output-line" style="margin-bottom: 20px; font-size:18px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 4px; display: inline-block;">>> Degrees</h3>';
-    if (edu.length > 0) {
-      html += edu.map(item => `
-        <div class="data-block output-line">
-          <div class="data-title neon-cyan">${clean(item.titulo)}</div>
-          <div class="data-subtitle">${clean(item.institucion)} [ ${clean(item.fecha_inicio)} - ${clean(item.fecha_fin)} ]</div>
-        </div>
-      `).join('');
-    }
+    let html = `<h3 class="neon-cyan output-line" style="margin-bottom: 20px; font-size:18px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 4px; display: inline-block;">${dict[currentLang].degTitle}</h3>`;
+    if (edu.length > 0) html += edu.map(item => `<div class="data-block output-line"><div class="data-title neon-cyan">${getDato(item, 'titulo')}</div><div class="data-subtitle">${getDato(item, 'institucion')} [ ${getDato(item, 'fecha_inicio')} - ${getDato(item, 'fecha_fin')} ]</div></div>`).join('');
     document.getElementById('list-education').innerHTML = html;
 
     if (certs.length > 0) {
-      let certsHtml = '<h3 class="neon-pink output-line" style="margin-bottom: 20px; margin-top: 25px; font-size:18px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 4px; display: inline-block;">>> Credentials</h3>';
-      certsHtml += certs.map(item => `
-        <div class="data-block output-line" style="border-left-color: #ff0055; background: linear-gradient(90deg, rgba(255,0,85,0.1) 0%, transparent 100%);">
-          <div class="data-title neon-pink" style="font-size: 16px;">${clean(item.nombre)}</div>
-          <div class="data-desc">${clean(item.institucion)}</div>
-        </div>
-      `).join('');
+      let certsHtml = `<h3 class="neon-pink output-line" style="margin-bottom: 20px; margin-top: 25px; font-size:18px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 4px; display: inline-block;">${dict[currentLang].certTitle}</h3>`;
+      certsHtml += certs.map(item => `<div class="data-block output-line" style="border-left-color: #ff0055; background: linear-gradient(90deg, rgba(255,0,85,0.1) 0%, transparent 100%);"><div class="data-title neon-pink" style="font-size: 16px;">${getDato(item, 'nombre')}</div><div class="data-desc">${getDato(item, 'institucion')}</div></div>`).join('');
       document.getElementById('list-certs').innerHTML = certsHtml;
     }
   }
@@ -597,14 +495,10 @@
       const targetId = e.target.getAttribute('data-target');
       document.getElementById(targetId).classList.add('active');
 
-      if (window.innerWidth <= 768) { window.scrollTo({ top: 0, behavior: 'smooth' }); }
-      
+      document.getElementById('terminal-body').scrollTo({ top: 0, behavior: 'smooth' });
       runTerminalEffect(targetId);
     });
   });
-
-  // Inicializar
-  loadData();
 </script>
 </body>
 </html>
