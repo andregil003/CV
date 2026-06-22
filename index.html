@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-  /* Base Reset */
   * { box-sizing: border-box; margin: 0; padding: 0; }
   
   body {
@@ -19,14 +18,12 @@
     overflow-x: hidden;
   }
 
-  /* Matrix Canvas Background */
   #matrix-bg {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
     z-index: -2; opacity: 0.8;
   }
 
-  /* --- EFECTOS DE NEÓN REALISTAS --- */
   @keyframes neon-flicker {
     0%, 18%, 22%, 25%, 53%, 57%, 100% {
       text-shadow: 0 0 2px #00ff41, 0 0 8px #00ff41, 0 0 15px rgba(0, 255, 65, 0.8), 0 0 30px rgba(0, 255, 65, 0.4);
@@ -49,7 +46,6 @@
   .neon-cyan { animation: neon-flicker-cyan 3s infinite alternate; color: #00e5ff; }
   .neon-pink { animation: neon-flicker-pink 5s infinite alternate; color: #ff0055; }
 
-  /* --- ANIMACIONES DE TERMINAL --- */
   @keyframes cursor-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
   .cursor { display: inline-block; width: 8px; height: 1em; background-color: #00ff41; vertical-align: middle; animation: cursor-blink 1s infinite; margin-left: 2px; }
 
@@ -64,7 +60,6 @@
     100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
   }
 
-  /* Scanlines Background */
   .scanlines {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15));
@@ -74,9 +69,7 @@
   a { color: #00e5ff; text-decoration: none; border-bottom: 1px dashed #00e5ff; transition: 0.3s; text-shadow: 0 0 5px rgba(0, 229, 255, 0.5); }
   a:hover { background-color: #00e5ff; color: #010402; text-shadow: none; box-shadow: 0 0 10px #00e5ff; }
 
-  /* ==========================================
-     DESKTOP LAYOUT (TERMINAL WINDOW)
-     ========================================== */
+  /* --- DESKTOP LAYOUT --- */
   .terminal-window {
     max-width: 950px;
     margin: 40px auto;
@@ -91,52 +84,38 @@
     display: none; 
   }
 
-  /* --- NUEVO GRID 3D ANIMADO INTERNO --- */
+  /* GRID 3D */
   .terminal-window::before {
-    content: '';
-    position: absolute;
-    top: 20%; left: -50%;
-    width: 200%; height: 150%;
+    content: ''; position: absolute; top: 20%; left: -50%; width: 200%; height: 150%;
     background-image: 
       linear-gradient(rgba(0, 255, 65, 0.25) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 255, 65, 0.25) 1px, transparent 1px);
-    background-size: 50px 50px;
-    transform-origin: center top;
-    animation: grid-3d-scroll 2s linear infinite;
-    z-index: 0;
-    pointer-events: none;
-    /* Difuminado hacia el fondo para dar perspectiva real */
+    background-size: 50px 50px; transform-origin: center top;
+    animation: grid-3d-scroll 2s linear infinite; z-index: 0; pointer-events: none;
     mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%);
     -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 40%);
   }
 
   @keyframes grid-3d-scroll {
     0% { transform: perspective(600px) rotateX(65deg) translateY(0); }
-    100% { transform: perspective(600px) rotateX(65deg) translateY(50px); } /* Misma medida que el background-size */
+    100% { transform: perspective(600px) rotateX(65deg) translateY(50px); }
   }
 
   .terminal-window.loaded {
-    display: block;
-    animation: window-open 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    display: block; animation: window-open 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
 
   .terminal-header {
     background-color: #00ff41; color: #010402; padding: 8px 16px;
     font-weight: 800; display: flex; justify-content: space-between;
-    align-items: center; font-size: 15px; box-shadow: 0 0 15px #00ff41;
-    position: relative; z-index: 10;
+    align-items: center; font-size: 15px; box-shadow: 0 0 15px #00ff41; position: relative; z-index: 10;
   }
 
-  .terminal-body { 
-    padding: 30px; 
-    position: relative;
-    z-index: 10; /* Textos sobre el grid */
-  }
+  .terminal-body { padding: 30px; position: relative; z-index: 10; }
 
   nav {
     display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 30px;
-    border-bottom: 1px solid rgba(0, 255, 65, 0.4); padding-bottom: 15px;
-    position: relative;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.4); padding-bottom: 15px; position: relative;
   }
 
   .nav-btn {
@@ -144,7 +123,7 @@
     padding: 8px 16px; cursor: pointer; font-family: 'JetBrains Mono', monospace;
     font-weight: 700; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     position: relative; overflow: hidden; text-shadow: 0 0 5px rgba(0,255,65,0.5);
-    background-color: rgba(0,0,0,0.6); /* Fondo para no transparentar el grid */
+    background-color: rgba(0,0,0,0.6);
   }
 
   .nav-btn::before {
@@ -166,15 +145,13 @@
   .cmd-prompt span.path { font-weight: bold; }
   .cmd-text { color: #ffffff; text-shadow: 0 0 5px #ffffff; }
   
-  /* Cards & Data */
   .output-line { opacity: 0; }
 
   .data-block {
     margin-bottom: 25px; padding-left: 15px; border-left: 2px solid rgba(0, 255, 65, 0.4);
     background: linear-gradient(90deg, rgba(0,255,65,0.1) 0%, transparent 100%);
     background-size: 200% 100%; background-position: 100% 0; transition: 0.3s;
-    background-color: rgba(0,0,0,0.4); /* Mayor legibilidad sobre el grid 3D */
-    border-radius: 0 4px 4px 0;
+    background-color: rgba(0,0,0,0.4); border-radius: 0 4px 4px 0;
   }
   .data-block:hover { 
     border-left-color: #00ff41; background-position: 0 0;
@@ -206,9 +183,7 @@
   .bracket { font-weight: bold; margin: 0 6px; transition: 0.3s; }
   .skill-module:hover .bracket { color: #ff0055; text-shadow: 0 0 8px #ff0055; margin: 0 10px; }
 
-  /* ==========================================
-     CONTENEDOR DEL LOADER COMPACTO Y VISIBLE
-     ========================================== */
+  /* --- LOADER --- */
   #loader {
     position: fixed; inset: 0; background-color: #010402; z-index: 10000;
     display: flex; justify-content: center; align-items: center; 
@@ -216,11 +191,8 @@
   }
   
   .boot-container {
-    border: 1px solid rgba(0, 255, 65, 0.5);
-    background: rgba(3, 8, 5, 0.95);
-    padding: 30px 40px;
-    border-radius: 8px;
-    box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);
+    border: 1px solid rgba(0, 255, 65, 0.5); background: rgba(3, 8, 5, 0.95);
+    padding: 30px 40px; border-radius: 8px; box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);
     display: flex; flex-direction: column; align-items: flex-start;
     max-width: 90vw; width: fit-content; min-width: 300px;
   }
@@ -229,9 +201,7 @@
   .spinner .blink { animation: cursor-blink 0.5s infinite; }
   #boot-text { color: #00e5ff; text-align: left; white-space: pre-wrap; font-size: 14px; text-shadow: 0 0 5px #00e5ff; line-height: 1.6; }
 
-  /* ==========================================
-     MOBILE APP MODE
-     ========================================== */
+  /* --- MOBILE MODE --- */
   @media (max-width: 768px) {
     body { background-color: #010402; }
     #matrix-bg { opacity: 0.3; }
@@ -241,12 +211,7 @@
       box-shadow: none; display: none; flex-direction: column;
     }
     
-    /* El mismo grid 3D se aplica en el modo full screen de celular */
-    .terminal-window::before {
-      top: 10%;
-      background-size: 40px 40px;
-    }
-
+    .terminal-window::before { top: 10%; background-size: 40px 40px; }
     .terminal-window.loaded { display: flex; animation: none; transform: none; }
     
     .terminal-header { position: sticky; top: 0; z-index: 100; font-size: 13px; padding: 10px 15px; }
@@ -352,14 +317,16 @@
   canvas.height = window.innerHeight;
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()<>{}[]/\\|'.split('');
   const fontSize = 14;
-  let columns = canvas.width / fontSize;
+  let columns = Math.floor(canvas.width / fontSize);
   let drops = [];
+  
   function initMatrix() {
-    columns = canvas.width / fontSize;
+    columns = Math.floor(canvas.width / fontSize);
     drops = [];
     for(let x = 0; x < columns; x++) { drops[x] = 1; }
   }
   initMatrix();
+  
   function drawMatrix() {
     ctx.fillStyle = 'rgba(1, 4, 2, 0.08)'; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -378,6 +345,8 @@
   // --- TERMINAL PRINT EFFECT ---
   async function runTerminalEffect(sectionId) {
     const section = document.getElementById(sectionId);
+    if(!section) return;
+
     const prompts = section.querySelectorAll('.cmd-prompt');
     const outputs = section.querySelectorAll('.output-line');
     
@@ -392,7 +361,7 @@
       const prompt = prompts[i];
       const cmdTextSpan = prompt.querySelector('.cmd-text');
       if(cmdTextSpan) {
-        const fullCmd = cmdTextSpan.getAttribute('data-cmd');
+        const fullCmd = cmdTextSpan.getAttribute('data-cmd') || '';
         cmdTextSpan.innerHTML = '';
         
         const cursor = document.createElement('span');
@@ -416,7 +385,13 @@
   // --- OBTENCIÓN DE DATOS Y RENDERIZADO ---
   const API_URL = 'https://script.google.com/macros/s/AKfycbx9LGyGgz47Yt36HD5j4WeSezaK6UAdLXmHo9NSHkN6CcROz1cpL9-Abrp4acKzdIQy/exec';
 
-  const clean = (str) => { const div = document.createElement('div'); div.textContent = str || ''; return div.innerHTML; };
+  const clean = (str) => { 
+    if(!str) return '';
+    const div = document.createElement('div'); 
+    div.textContent = str; 
+    return div.innerHTML; 
+  };
+  
   const parseLink = (url) => {
     if (!url) return '';
     let link = clean(url).trim();
@@ -426,48 +401,63 @@
 
   const bootLines = [
     "Establishing secure connection to AppScripts...",
-    "Querying Google Sheets database... [OK]",
-    "Decrypting data matrices... [200 OK]",
-    "Initializing UI components... [READY]"
+    "Querying Google Sheets database...",
+    "Decrypting data matrices...",
+    "Initializing UI components..."
   ];
   
   async function simulateBoot() {
     const bootText = document.getElementById('boot-text');
     for(let i = 0; i < bootLines.length; i++) {
       bootText.innerHTML += bootLines[i] + "<br>";
-      await new Promise(r => setTimeout(r, 150 + Math.random() * 200)); 
+      await new Promise(r => setTimeout(r, 150 + Math.random() * 150)); 
     }
   }
 
   async function loadData() {
     const bootAnim = simulateBoot();
+    const bootText = document.getElementById('boot-text');
+
     try {
-      const response = await fetch(API_URL);
+      // Agregado explícitamente el redirect: "follow" por si AppScript hace un 302
+      const response = await fetch(API_URL, { redirect: "follow" });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP Error Status: ${response.status}`);
+      }
+
       const data = await response.json();
       await bootAnim; 
       
-      renderProfile(data.info[0]);
-      renderExperience(data.experiencia);
-      renderProjects(data.proyectos);
-      renderSkills(data.skills);
-      renderEducation(data.educacion, data.certificaciones);
+      // Validaciones de seguridad para evitar que se quede "cargando" si un dato falta en tu Google Sheet
+      const info = (data.info && data.info.length > 0) ? data.info[0] : {};
+      renderProfile(info);
+      renderExperience(Array.isArray(data.experiencia) ? data.experiencia : []);
+      renderProjects(Array.isArray(data.proyectos) ? data.proyectos : []);
+      renderSkills(Array.isArray(data.skills) ? data.skills : []);
+      renderEducation(Array.isArray(data.educacion) ? data.educacion : [], Array.isArray(data.certificaciones) ? data.certificaciones : []);
+
+      bootText.innerHTML += "<span class='neon-cyan'>[READY] Launching interface...</span><br>";
 
       const loader = document.getElementById('loader');
-      loader.style.opacity = '0';
       setTimeout(() => {
-        loader.style.display = 'none';
-        document.getElementById('main-terminal').classList.add('loaded'); 
-        runTerminalEffect('sys-profile');
-      }, 500);
+        loader.style.opacity = '0';
+        setTimeout(() => {
+          loader.style.display = 'none';
+          document.getElementById('main-terminal').classList.add('loaded'); 
+          runTerminalEffect('sys-profile');
+        }, 500);
+      }, 400);
       
     } catch (error) {
-      document.getElementById('boot-text').innerHTML += "<br><span class='neon-pink'>[FATAL ERROR] Connection timeout to database.</span>";
+      // SI HAY ERROR SE IMPRIME AQUÍ EN ROJO PARA SABER QUÉ PASA
+      bootText.innerHTML += `<br><span class='neon-pink'>[FATAL ERROR] Data fetch failed.</span><br>`;
+      bootText.innerHTML += `<span style="color:#aaa;">Detalle: ${clean(error.message)}</span>`;
       console.error(error);
     }
   }
 
   function renderProfile(info) {
     if (!info) return;
-    document.getElementById('ui-name').innerHTML = clean(info.nombre);
-    document.getElementById('ui-role').innerHTML = `> ${clean(info.titulo)}`;
-    document.getElementById('ui-bio').innerHTML 
+    document.getElementById('ui-name').innerHTML = clean(info.nombre) || 'Usuario';
+    document.getEleme
