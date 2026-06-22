@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
+  /* Base Reset */
   * { box-sizing: border-box; margin: 0; padding: 0; }
   
   body {
@@ -18,12 +19,14 @@
     overflow-x: hidden;
   }
 
+  /* Matrix Canvas Background */
   #matrix-bg {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
     z-index: -2; opacity: 0.8;
   }
 
+  /* --- EFECTOS DE NEÓN REALISTAS --- */
   @keyframes neon-flicker {
     0%, 18%, 22%, 25%, 53%, 57%, 100% {
       text-shadow: 0 0 2px #00ff41, 0 0 8px #00ff41, 0 0 15px rgba(0, 255, 65, 0.8), 0 0 30px rgba(0, 255, 65, 0.4);
@@ -46,6 +49,7 @@
   .neon-cyan { animation: neon-flicker-cyan 3s infinite alternate; color: #00e5ff; }
   .neon-pink { animation: neon-flicker-pink 5s infinite alternate; color: #ff0055; }
 
+  /* --- ANIMACIONES DE TERMINAL --- */
   @keyframes cursor-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
   .cursor { display: inline-block; width: 8px; height: 1em; background-color: #00ff41; vertical-align: middle; animation: cursor-blink 1s infinite; margin-left: 2px; }
 
@@ -60,6 +64,7 @@
     100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
   }
 
+  /* Scanlines Background */
   .scanlines {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15));
@@ -69,7 +74,9 @@
   a { color: #00e5ff; text-decoration: none; border-bottom: 1px dashed #00e5ff; transition: 0.3s; text-shadow: 0 0 5px rgba(0, 229, 255, 0.5); }
   a:hover { background-color: #00e5ff; color: #010402; text-shadow: none; box-shadow: 0 0 10px #00e5ff; }
 
-  /* --- DESKTOP LAYOUT --- */
+  /* ==========================================
+     DESKTOP LAYOUT (TERMINAL WINDOW)
+     ========================================== */
   .terminal-window {
     max-width: 950px;
     margin: 40px auto;
@@ -140,10 +147,11 @@
   .section { display: none; position: relative; }
   .section.active { display: block; }
 
-  .cmd-prompt { margin-bottom: 25px; font-size: 16px; overflow-wrap: break-word; line-height: 1.4; }
+  /* Corrección móvil: evitar que textos largos rompan el flex/ancho */
+  .cmd-prompt { margin-bottom: 25px; font-size: 16px; overflow-wrap: break-word; word-break: break-word; line-height: 1.4; }
   .cmd-prompt span.user { font-weight: bold; } 
   .cmd-prompt span.path { font-weight: bold; }
-  .cmd-text { color: #ffffff; text-shadow: 0 0 5px #ffffff; }
+  .cmd-text { color: #ffffff; text-shadow: 0 0 5px #ffffff; white-space: pre-wrap; }
   
   .output-line { opacity: 0; }
 
@@ -201,7 +209,7 @@
   .spinner .blink { animation: cursor-blink 0.5s infinite; }
   #boot-text { color: #00e5ff; text-align: left; white-space: pre-wrap; font-size: 14px; text-shadow: 0 0 5px #00e5ff; line-height: 1.6; }
 
-  /* --- MOBILE MODE --- */
+  /* --- MOBILE APP MODE --- */
   @media (max-width: 768px) {
     body { background-color: #010402; }
     #matrix-bg { opacity: 0.3; }
@@ -215,7 +223,7 @@
     .terminal-window.loaded { display: flex; animation: none; transform: none; }
     
     .terminal-header { position: sticky; top: 0; z-index: 100; font-size: 13px; padding: 10px 15px; }
-    .terminal-body { padding: 15px 15px 40px 15px; flex: 1; }
+    .terminal-body { padding: 15px 15px 40px 15px; flex: 1; overflow-x: hidden; }
 
     nav { 
       position: sticky; top: 38px; z-index: 99; background-color: rgba(3, 8, 5, 0.98);
@@ -269,7 +277,7 @@
     </nav>
 
     <div id="sys-profile" class="section active">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="cat user_info.txt">cat user_info.txt</span><span class="cursor"></span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="cat user_info.txt"></span></div>
       
       <div class="output-line" style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 5px; margin-bottom: 20px;">
         <h1 class="neon-green" id="ui-name" style="font-size: clamp(28px, 5vw, 48px); margin-bottom: 5px;">...</h1>
@@ -280,28 +288,28 @@
         <p id="ui-bio" style="color: #eee; font-size: 14.5px;"></p>
       </div>
 
-      <div class="output-line cmd-prompt" style="margin-top:20px;"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="netstat -a | grep conn">netstat -a | grep conn</span></div>
+      <div class="output-line cmd-prompt" style="margin-top:20px;"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/profile</span>$ <span class="cmd-text" data-cmd="netstat -a | grep conn"></span></div>
       
       <div class="output-line" id="ui-contact" style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px; font-size: 13.5px; overflow-wrap: anywhere; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 5px;"></div>
     </div>
 
     <div id="sys-experience" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/experience</span>$ <span class="cmd-text" data-cmd="ls -la --timeline">ls -la --timeline</span><span class="cursor"></span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/experience</span>$ <span class="cmd-text" data-cmd="ls -la --timeline"></span></div>
       <div id="list-experience"></div>
     </div>
 
     <div id="sys-projects" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/builds</span>$ <span class="cmd-text" data-cmd="docker ps -a">docker ps -a</span><span class="cursor"></span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/builds</span>$ <span class="cmd-text" data-cmd="docker ps -a"></span></div>
       <div id="list-projects"></div>
     </div>
 
     <div id="sys-skills" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/skills</span>$ <span class="cmd-text" data-cmd="ls -l --group-directories-first">ls -l --group-directories-first</span><span class="cursor"></span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/skills</span>$ <span class="cmd-text" data-cmd="ls -l --group-directories-first"></span></div>
       <div id="list-skills"></div>
     </div>
 
     <div id="sys-education" class="section">
-      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/education</span>$ <span class="cmd-text" data-cmd="history | grep certs">history | grep certs</span><span class="cursor"></span></div>
+      <div class="cmd-prompt"><span class="user neon-pink">root@user</span>:<span class="path neon-cyan">~/education</span>$ <span class="cmd-text" data-cmd="history | grep certs"></span></div>
       <div id="list-education"></div>
       <div id="list-certs" style="margin-top: 30px;"></div>
     </div>
@@ -343,9 +351,27 @@
   window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initMatrix(); });
 
   // --- TERMINAL PRINT EFFECT ---
+  let currentAnimationId = 0; // ID para evitar choques de animaciones al cambiar de pestaña rápido
+
   async function runTerminalEffect(sectionId) {
     const section = document.getElementById(sectionId);
     if(!section) return;
+
+    // SISTEMA DE MEMORIA: Si la pestaña ya se animó antes, la muestra instantáneamente y no la recarga
+    if (section.getAttribute('data-animated') === 'true') {
+      const outputs = section.querySelectorAll('.output-line');
+      outputs.forEach(el => {
+        el.style.opacity = '1';
+        el.classList.remove('flicker-in');
+      });
+      const cmdTexts = section.querySelectorAll('.cmd-text');
+      cmdTexts.forEach(cmd => { cmd.innerHTML = cmd.getAttribute('data-cmd') || ''; });
+      section.querySelectorAll('.cursor').forEach(c => c.remove());
+      return;
+    }
+
+    const animId = ++currentAnimationId; // Candado para abortar la animación si cambia de pestaña
+    section.setAttribute('data-animated', 'true'); // Marca la pestaña como ya animada
 
     const prompts = section.querySelectorAll('.cmd-prompt');
     const outputs = section.querySelectorAll('.output-line');
@@ -358,6 +384,8 @@
     document.querySelectorAll('.cursor').forEach(c => c.remove());
     
     for (let i = 0; i < prompts.length; i++) {
+      if(animId !== currentAnimationId) return; // Aborta si el usuario cambió de pestaña
+
       const prompt = prompts[i];
       const cmdTextSpan = prompt.querySelector('.cmd-text');
       if(cmdTextSpan) {
@@ -369,16 +397,19 @@
         prompt.appendChild(cursor);
 
         for(let c = 0; c < fullCmd.length; c++) {
+          if(animId !== currentAnimationId) return; // Aborta tipeo a la mitad
           cmdTextSpan.innerHTML += fullCmd.charAt(c);
-          await new Promise(r => setTimeout(r, 20 + Math.random() * 30));
+          await new Promise(r => setTimeout(r, 15 + Math.random() * 20)); // Tipeo un poco más rápido
         }
-        await new Promise(r => setTimeout(r, 150)); 
+        await new Promise(r => setTimeout(r, 100)); 
       }
     }
 
     for (let i = 0; i < outputs.length; i++) {
+      if(animId !== currentAnimationId) return; // Aborta
       outputs[i].classList.add('flicker-in');
-      await new Promise(r => setTimeout(r, 50 + Math.random() * 80)); 
+      outputs[i].style.opacity = '1'; // Fuerza a que sea visible
+      await new Promise(r => setTimeout(r, 30 + Math.random() * 50)); 
     }
   }
 
@@ -419,17 +450,12 @@
     const bootText = document.getElementById('boot-text');
 
     try {
-      // Agregado explícitamente el redirect: "follow" por si AppScript hace un 302
       const response = await fetch(API_URL, { redirect: "follow" });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP Error Status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP Error Status: ${response.status}`);
 
       const data = await response.json();
       await bootAnim; 
       
-      // Validaciones de seguridad para evitar que se quede "cargando" si un dato falta en tu Google Sheet
       const info = (data.info && data.info.length > 0) ? data.info[0] : {};
       renderProfile(info);
       renderExperience(Array.isArray(data.experiencia) ? data.experiencia : []);
@@ -450,7 +476,6 @@
       }, 400);
       
     } catch (error) {
-      // SI HAY ERROR SE IMPRIME AQUÍ EN ROJO PARA SABER QUÉ PASA
       bootText.innerHTML += `<br><span class='neon-pink'>[FATAL ERROR] Data fetch failed.</span><br>`;
       bootText.innerHTML += `<span style="color:#aaa;">Detalle: ${clean(error.message)}</span>`;
       console.error(error);
